@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário de Oração — Um Lugar Chamado Betânia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --espresso:    #3A2228;
+    --terracota:   #7E3F30;
+    --creme:       #F5E6D8;
+    --dourado:     #D4A97A;
+    --rosado:      #D98080;
+    --creme-claro: #FBF3EC;
+    --texto:       #3A2228;
+    --suave:       #A06050;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--creme-claro);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--espresso);
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(58,34,40,0.25);
+  }
+  nav .logo {
+    font-family: 'Dancing Script', cursive;
+    color: var(--dourado);
+    font-size: 1.5rem;
+  }
+  .nav-tabs {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .nav-tab {
+    background: none; border: 1px solid rgba(212,169,122,0.35);
+    color: var(--creme); padding: 7px 14px; border-radius: 20px;
+    cursor: pointer; font-family: 'Lato', sans-serif; font-size: 0.8rem;
+    transition: all 0.25s;
+  }
+  .nav-tab:hover, .nav-tab.active {
+    background: var(--dourado); border-color: var(--dourado);
+    color: var(--espresso); font-weight: 700;
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 30px 20px; max-width: 860px; margin: 0 auto; }
+  .section.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ===== COVER ===== */
+  .cover {
+    background: linear-gradient(160deg, var(--espresso) 0%, var(--terracota) 55%, var(--rosado) 100%);
+    border-radius: 20px; padding: 60px 40px;
+    text-align: center; color: var(--creme);
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(58,34,40,0.35);
+  }
+  .cover::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(212,169,122,0.25);
+    border: 1px solid var(--dourado);
+    color: var(--dourado); font-size: 0.75rem;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 6px 20px; border-radius: 30px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700; line-height: 1.2;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .cover h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--dourado); margin-bottom: 24px;
+  }
+  .cover-verse {
+    background: rgba(255,255,255,0.1);
+    border-left: 3px solid var(--dourado);
+    padding: 16px 22px; border-radius: 0 10px 10px 0;
+    font-style: italic; font-size: 1rem; line-height: 1.7;
+    margin: 24px auto; max-width: 520px; text-align: left;
+  }
+  .cover-verse span { color: var(--dourado); font-size: 0.8rem; font-style: normal; display:block; margin-top:8px; }
+
+  .how-to {
+    background: rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 24px;
+    margin: 28px auto; max-width: 580px; text-align: left;
+  }
+  .how-to h3 { font-family:'Playfair Display',serif; color:var(--dourado); margin-bottom:12px; font-size:1.15rem; }
+  .how-to ol { padding-left:20px; }
+  .how-to li { margin-bottom:8px; font-size:0.9rem; line-height:1.6; }
+
+  /* PROGRESS TRACKER */
+  .progress-box {
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 24px;
+    margin: 20px auto; max-width: 680px;
+  }
+  .progress-box h3 { font-family:'Playfair Display',serif; color:var(--dourado); margin-bottom:16px; }
+  .days-grid { display:grid; grid-template-columns: repeat(10, 1fr); gap:6px; }
+  .day-dot {
+    width:100%; aspect-ratio:1;
+    border-radius: 50%; background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(212,169,122,0.3);
+    cursor: pointer; transition: all 0.2s;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.55rem; color: rgba(255,255,255,0.5);
+  }
+  .day-dot:hover { background: rgba(212,169,122,0.3); }
+  .day-dot.done { background: var(--dourado); border-color: var(--dourado); color: var(--espresso); font-weight:700; }
+  .day-dot.done::after { content:'✓'; }
+  .progress-bar-wrap { margin-top:14px; background:rgba(255,255,255,0.1); border-radius:20px; height:8px; }
+  .progress-bar { height:8px; border-radius:20px; background:linear-gradient(90deg,var(--dourado),var(--rosado)); transition:width 0.4s; }
+  .progress-label { font-size:0.8rem; color:var(--dourado); margin-top:8px; }
+
+  /* ===== DAILY ENTRY ===== */
+  .day-selector { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; justify-content:center; }
+  .day-btn {
+    background: var(--creme); border: 2px solid var(--dourado);
+    color: var(--terracota); padding: 8px 16px; border-radius: 20px;
+    cursor: pointer; font-weight:700; font-size:0.82rem;
+    transition:all 0.2s; font-family:'Lato',sans-serif;
+  }
+  .day-btn:hover, .day-btn.active {
+    background: var(--terracota); border-color:var(--terracota); color: var(--creme);
+  }
+  .day-example { background:#f0e0d4; border:1px solid var(--dourado); border-radius:6px; padding:6px 12px; font-size:0.75rem; color:var(--suave); margin-bottom:18px; }
+
+  .entry-card {
+    background: white; border-radius: 18px; overflow:hidden;
+    box-shadow: 0 4px 20px rgba(58,34,40,0.12);
+    margin-bottom: 20px;
+  }
+  .entry-header {
+    background: linear-gradient(135deg, var(--terracota), var(--espresso));
+    padding: 22px 28px; color: var(--creme);
+    display: flex; justify-content:space-between; align-items:center;
+  }
+  .entry-header h2 { font-family:'Playfair Display',serif; font-size:1.4rem; }
+  .entry-header .date-badge {
+    background: rgba(212,169,122,0.3); border:1px solid var(--dourado);
+    color: var(--dourado); padding:6px 14px; border-radius:20px; font-size:0.8rem;
+  }
+  .entry-body { padding: 28px; }
+
+  .field-group { margin-bottom: 22px; }
+  .field-label {
+    font-size:0.72rem; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; color:var(--terracota);
+    margin-bottom:8px; display:flex; align-items:center; gap:8px;
+  }
+  .field-label .emoji { font-size:1rem; }
+  .editable-tag {
+    background: var(--creme); border:1px dashed var(--rosado);
+    color: var(--rosado); font-size:0.65rem; padding:2px 8px;
+    border-radius:10px; font-weight:400; letter-spacing:0;
+    text-transform:none;
+  }
+  textarea, input[type="text"], input[type="date"] {
+    width:100%; border:1px solid #e8d5c5;
+    background: var(--creme-claro); border-radius:10px;
+    padding:12px 16px; font-family:'Lato',sans-serif; font-size:0.92rem;
+    color: var(--texto); resize: vertical; line-height:1.6;
+    transition: border-color 0.2s;
+    outline:none;
+  }
+  textarea:focus, input:focus { border-color: var(--rosado); background:white; }
+
+  .grat-row { display:grid; grid-template-columns:24px 1fr; gap:10px; align-items:center; margin-bottom:8px; }
+  .grat-num { width:24px; height:24px; background:var(--terracota); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; }
+
+  .section-divider { border:none; border-top:1px solid #e8d5c5; margin:22px 0; }
+
+  .verse-box {
+    background: linear-gradient(135deg, var(--creme), #fde8e0);
+    border:1px solid var(--dourado); border-radius:14px;
+    padding:20px; margin-bottom:16px;
+  }
+  .verse-box .verse-text { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; line-height:1.7; color:var(--terracota); margin-bottom:8px; }
+  .verse-ref { font-size:0.8rem; color:var(--suave); font-weight:700; }
+
+  .prayer-space {
+    background: var(--creme-claro);
+    border:1px solid #e8d5c5; border-radius:14px;
+    padding:20px; min-height:140px; position:relative;
+  }
+  .prayer-space::before {
+    content:'✍️ Escreva sua oração aqui...';
+    position:absolute; top:16px; left:16px;
+    color:#c9a898; font-style:italic; font-size:0.9rem;
+    pointer-events:none;
+  }
+  .prayer-space:focus-within::before { display:none; }
+  .prayer-space textarea { background:transparent; border:none; min-height:120px; }
+
+  .feeling-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  .feeling-btn {
+    background:var(--creme); border:1px solid #e8d5c5;
+    border-radius:10px; padding:10px 6px; text-align:center;
+    cursor:pointer; font-size:0.75rem; transition:all 0.2s;
+    color:var(--suave);
+  }
+  .feeling-btn .emoji { font-size:1.4rem; display:block; margin-bottom:4px; }
+  .feeling-btn:hover, .feeling-btn.selected { background:var(--terracota); color:white; border-color:var(--terracota); }
+
+  .save-btn {
+    background: linear-gradient(135deg, var(--terracota), var(--rosado));
+    color:white; border:none; padding:14px 32px;
+    border-radius:30px; font-size:1rem; font-weight:700;
+    cursor:pointer; width:100%; font-family:'Lato',sans-serif;
+    transition: opacity 0.2s; margin-top:10px;
+    box-shadow: 0 4px 16px rgba(126,63,48,0.35);
+  }
+  .save-btn:hover { opacity: 0.9; }
+
+  /* ===== REVIEW ===== */
+  .review-card {
+    background:white; border-radius:18px; overflow:hidden;
+    box-shadow: 0 4px 20px rgba(58,34,40,0.12); margin-bottom:24px;
+  }
+  .review-header {
+    background: linear-gradient(135deg, var(--espresso), var(--terracota));
+    padding:24px 28px; color:var(--creme);
+  }
+  .review-header h2 { font-family:'Playfair Display',serif; font-size:1.5rem; }
+  .review-header p { color:var(--dourado); font-size:0.9rem; margin-top:6px; }
+  .review-body { padding:28px; }
+  .review-q {
+    background:var(--creme); border-left:4px solid var(--rosado);
+    border-radius:0 12px 12px 0; padding:16px 20px; margin-bottom:16px;
+  }
+  .review-q .q-label { font-size:0.7rem; color:var(--rosado); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .review-q .q-text { font-family:'Playfair Display',serif; color:var(--terracota); font-size:1rem; margin-bottom:10px; }
+
+  /* ===== MIRACLES ===== */
+  .miracles-header {
+    background: linear-gradient(135deg, var(--rosado), var(--terracota));
+    padding:30px; border-radius:18px 18px 0 0; color:white;
+    text-align:center;
+  }
+  .miracles-header h2 { font-family:'Playfair Display',serif; font-size:1.8rem; }
+  .miracles-header p { opacity:0.85; font-size:0.9rem; margin-top:8px; }
+  .miracle-form {
+    background:white; padding:28px; border-radius:0 0 18px 18px;
+    box-shadow:0 4px 20px rgba(58,34,40,0.12);
+    margin-bottom:20px;
+  }
+  .miracle-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media(max-width:520px) { .miracle-row { grid-template-columns:1fr; } }
+  .miracle-entry {
+    background:var(--creme-claro); border:1px solid #e8d5c5;
+    border-radius:14px; padding:18px; margin-bottom:12px;
+    display:grid; grid-template-columns:40px 1fr; gap:14px; align-items:start;
+  }
+  .miracle-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--rosado),var(--terracota)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+  .miracle-info h4 { font-family:'Playfair Display',serif; color:var(--terracota); margin-bottom:4px; }
+  .miracle-info p { font-size:0.85rem; color:var(--suave); line-height:1.5; }
+  .miracle-info .miracle-date { font-size:0.75rem; color:var(--rosado); font-weight:700; }
+
+  /* ===== FINAL ===== */
+  .final-cover {
+    background: linear-gradient(160deg, var(--terracota) 0%, var(--rosado) 60%, var(--dourado) 100%);
+    border-radius:20px; padding:50px 36px; text-align:center;
+    color:white; margin-bottom:24px;
+    box-shadow:0 8px 32px rgba(58,34,40,0.3);
+  }
+  .final-cover h1 { font-family:'Playfair Display',serif; font-size:2.2rem; margin-bottom:12px; }
+  .final-cover h2 { font-family:'Dancing Script',cursive; font-size:1.6rem; color:rgba(255,255,255,0.85); }
+  .final-card {
+    background:white; border-radius:18px;
+    box-shadow:0 4px 20px rgba(58,34,40,0.12);
+    overflow:hidden; margin-bottom:20px;
+  }
+  .final-card-header {
+    background:var(--creme); padding:20px 28px;
+    border-bottom:1px solid #e8d5c5;
+    font-family:'Playfair Display',serif; color:var(--terracota);
+    font-size:1.2rem;
+  }
+  .final-card-body { padding:28px; }
+  .cta-box {
+    background:linear-gradient(135deg,var(--espresso),var(--terracota));
+    border-radius:16px; padding:30px; text-align:center; color:white;
+  }
+  .cta-box h3 { font-family:'Dancing Script',cursive; font-size:1.6rem; color:var(--dourado); margin-bottom:10px; }
+  .cta-box p { font-size:0.9rem; opacity:0.85; margin-bottom:16px; }
+  .cta-btn {
+    background:var(--dourado); color:var(--espresso);
+    border:none; padding:14px 32px; border-radius:30px;
+    font-weight:700; cursor:pointer; font-size:1rem;
+    font-family:'Lato',sans-serif;
+  }
+
+  /* SAVED NOTICE */
+  .toast {
+    position:fixed; bottom:30px; right:30px; z-index:999;
+    background:var(--terracota); color:white;
+    padding:14px 22px; border-radius:12px;
+    font-size:0.9rem; font-weight:700;
+    box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    transform:translateY(100px); opacity:0;
+    transition:all 0.35s;
+  }
+  .toast.show { transform:translateY(0); opacity:1; }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    .days-grid { grid-template-columns: repeat(6,1fr); }
+    .cover { padding:36px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">🌿 Betânia</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="show('abertura')">🏠 Início</button>
+    <button class="nav-tab" onclick="show('diario')">✍️ Diário</button>
+    <button class="nav-tab" onclick="show('revisao')">🔍 Revisão</button>
+    <button class="nav-tab" onclick="show('milagres')">✨ Milagres</button>
+    <button class="nav-tab" onclick="show('final')">🎉 Encerramento</button>
+  </div>
+</nav>
+
+<!-- ===================== ABERTURA ===================== -->
+<div id="abertura" class="section active">
+  <div class="cover">
+    <div class="cover-badge">✨ Diário Devocional Premium — 30 Dias</div>
+    <h1>Um Lugar Chamado<br>Betânia</h1>
+    <h2>O Coração que Recebe 🌿</h2>
+    <div class="cover-verse">
+      "Maria, que se assentou aos pés do Senhor, escolheu a boa parte, e esta não lhe será tirada."
+      <span>— Lucas 10:42 [VERSÍCULO EDITÁVEL]</span>
+    </div>
+    <div class="how-to">
+      <h3>📖 Como Usar Este Diário</h3>
+      <ol>
+        <li><strong>Cada dia</strong>, abra a seção <em>Diário</em> e selecione o dia atual</li>
+        <li>Responda os <strong>campos de gratidão, intenção e versículo</strong></li>
+        <li>Use o espaço livre para <strong>escrever sua oração</strong> com o coração aberto</li>
+        <li>A cada 7 dias, acesse <strong>Revisão Semanal</strong> para refletir</li>
+        <li>Registre suas <strong>orações respondidas</strong> na seção Milagres</li>
+      </ol>
+    </div>
+    <div class="progress-box">
+      <h3>📅 Meu Progresso — 30 Dias com Deus</h3>
+      <div class="days-grid" id="daysGrid"></div>
+      <div class="progress-bar-wrap" style="margin-top:14px;">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">0 de 30 dias concluídos ✨</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DIÁRIO ===================== -->
+<div id="diario" class="section">
+  <div class="day-selector" id="daySelector"></div>
+
+  <div class="day-example">
+    💡 <strong>Campos marcados com [EDITÁVEL]</strong> são personalizáveis — troque versículos, perguntas e afirmações pelo que fizer sentido para você!
+  </div>
+
+  <!-- DIA 1 -->
+  <div class="entry-card" id="entry-1" style="display:none">
+    <div class="entry-header">
+      <div>
+        <h2>✨ Dia 1 — Chegando a Betânia</h2>
+        <p style="font-size:0.85rem;color:var(--creme);opacity:0.8;margin-top:4px;">Tema: Recebendo a Presença de Deus</p>
+      </div>
+      <div class="date-badge">📅 [DATA]</div>
+    </div>
+    <div class="entry-body">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌸</span> Data de Hoje <span class="editable-tag">editável</span></div>
+        <input type="date" id="data-1">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🙏</span> Seção A — Gratidão de Hoje <span class="editable-tag">editável</span></div>
+        <div class="grat-row"><div class="grat-num">1</div><input type="text" placeholder="Hoje sou grata por... (ex: pela saúde da minha família)"></div>
+        <div class="grat-row"><div class="grat-num">2</div><input type="text" placeholder="Uma pequena bênção que quase não percebi..."></div>
+        <div class="grat-row"><div class="grat-num">3</div><input type="text" placeholder="Algo que Deus fez por mim esta semana..."></div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🎯</span> Seção B — Intenções de Oração <span class="editable-tag">editável</span></div>
+        <textarea rows="4" placeholder="O que eu trago ao coração de Deus hoje?&#10;&#10;Exemplo: Senhor, entrego minhas finanças, peço sabedoria nas decisões, oro pela minha família...&#10;&#10;[ESCREVA SUAS INTENÇÕES AQUI]"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌟</span> Afirmação do Dia <span class="editable-tag">editável</span></div>
+        <textarea rows="2" placeholder="Repita em voz alta: 'Eu sou filha amada de Deus. Neste dia, escolho sentar aos Seus pés e receber.' [EDITE SUA AFIRMAÇÃO]"></textarea>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">📖</span> Seção C — Versículo do Dia <span class="editable-tag">editável</span></div>
+        <div class="verse-box">
+          <div class="verse-text">"Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei."</div>
+          <div class="verse-ref">— Mateus 11:28 [TROQUE PELO SEU VERSÍCULO FAVORITO]</div>
+        </div>
+        <textarea rows="3" placeholder="O que este versículo fala ao meu coração hoje?&#10;&#10;[ESPAÇO DE REFLEXÃO]"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">✍️</span> Minha Oração — Espaço Livre <span class="editable-tag">editável</span></div>
+        <div class="prayer-space">
+          <textarea rows="7" placeholder="Escreva sua oração aqui... fale como filha, como amiga, com total liberdade. &#10;&#10;Não há forma certa. Apenas seja real com Deus. 💛"></textarea>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">💛</span> Seção de Fechamento — Como Me Senti Hoje <span class="editable-tag">editável</span></div>
+        <div class="feeling-grid">
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">😌</span>Em paz</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">😭</span>Vulnerável</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🔥</span>Acesa</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">😴</span>Cansada</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🌸</span>Grata</div>
+        </div>
+        <textarea rows="3" placeholder="O que quero melhorar amanhã? [CAMPO LIVRE]" style="margin-top:12px"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveDay(1)">💾 Marcar Dia 1 como Concluído ✨</button>
+    </div>
+  </div>
+
+  <!-- DIA 2 -->
+  <div class="entry-card" id="entry-2" style="display:none">
+    <div class="entry-header">
+      <div>
+        <h2>🌿 Dia 2 — Finanças com Fé</h2>
+        <p style="font-size:0.85rem;color:var(--creme);opacity:0.8;margin-top:4px;">Tema: Confiando a Deus o que é material</p>
+      </div>
+      <div class="date-badge">📅 [DATA]</div>
+    </div>
+    <div class="entry-body">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌸</span> Data de Hoje <span class="editable-tag">editável</span></div>
+        <input type="date" id="data-2">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🙏</span> Gratidão Financeira <span class="editable-tag">editável</span></div>
+        <div class="grat-row"><div class="grat-num">1</div><input type="text" placeholder="Uma provisão que recebi esta semana..."></div>
+        <div class="grat-row"><div class="grat-num">2</div><input type="text" placeholder="Uma conta que consegui pagar..."></div>
+        <div class="grat-row"><div class="grat-num">3</div><input type="text" placeholder="Uma bênção que não era esperada..."></div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">💰</span> Seção B — Intenções Financeiras <span class="editable-tag">editável</span></div>
+        <textarea rows="3" placeholder="Quais preocupações financeiras entrego a Deus hoje?&#10;[LISTA SUAS DÍVIDAS OU PEDIDOS]"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌟</span> Meta Financeira do Dia <span class="editable-tag">editável</span></div>
+        <textarea rows="2" placeholder="Uma ação prática que tomarei hoje em relação às minhas finanças... [EDITE]"></textarea>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">📖</span> Versículo Financeiro <span class="editable-tag">editável</span></div>
+        <div class="verse-box">
+          <div class="verse-text">"O Senhor é o meu pastor; nada me faltará."</div>
+          <div class="verse-ref">— Salmo 23:1 [TROQUE PELO SEU VERSÍCULO]</div>
+        </div>
+        <textarea rows="3" placeholder="Como este versículo se aplica à minha realidade financeira hoje?"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">✍️</span> Oração pelas Finanças</div>
+        <div class="prayer-space">
+          <textarea rows="7" placeholder="Senhor, entrego a Ti minha situação financeira. Tu és o Dono de tudo... [ESCREVA SUA ORAÇÃO]"></textarea>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">💛</span> Fechamento — Como Me Senti</div>
+        <div class="feeling-grid">
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🕊️</span>Aliviada</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">💪</span>Corajosa</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">😰</span>Ansiosa</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🙏</span>Confiante</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">✨</span>Esperançosa</div>
+        </div>
+        <textarea rows="2" placeholder="O que aprendi hoje sobre confiar em Deus com minhas finanças?" style="margin-top:12px"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveDay(2)">💾 Marcar Dia 2 como Concluído ✨</button>
+    </div>
+  </div>
+
+  <!-- DIA 3 -->
+  <div class="entry-card" id="entry-3" style="display:none">
+    <div class="entry-header">
+      <div>
+        <h2>🌸 Dia 3 — Me Conhecendo</h2>
+        <p style="font-size:0.85rem;color:var(--creme);opacity:0.8;margin-top:4px;">Tema: Autoconhecimento à Luz da Palavra</p>
+      </div>
+      <div class="date-badge">📅 [DATA]</div>
+    </div>
+    <div class="entry-body">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌸</span> Data <span class="editable-tag">editável</span></div>
+        <input type="date" id="data-3">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🙏</span> Gratidão — Quem Sou <span class="editable-tag">editável</span></div>
+        <div class="grat-row"><div class="grat-num">1</div><input type="text" placeholder="Uma qualidade que reconheço em mim hoje..."></div>
+        <div class="grat-row"><div class="grat-num">2</div><input type="text" placeholder="Uma conquista que Deus me ajudou a alcançar..."></div>
+        <div class="grat-row"><div class="grat-num">3</div><input type="text" placeholder="Um momento em que fui forte esta semana..."></div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🪞</span> Check-In Emocional <span class="editable-tag">editável</span></div>
+        <textarea rows="3" placeholder="Como estou de verdade hoje? O que meu coração carrega? [ESCREVA SEM JULGAMENTO]"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🌟</span> Afirmação de Identidade <span class="editable-tag">editável</span></div>
+        <textarea rows="2" placeholder="Declare: 'Sou criada à imagem de Deus. Sou amada, capaz e chamada para um propósito.' [PERSONALIZE]"></textarea>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">📖</span> Versículo do Dia <span class="editable-tag">editável</span></div>
+        <div class="verse-box">
+          <div class="verse-text">"Eu te louvarei, porque de modo assombroso e tão maravilhoso fui feita."</div>
+          <div class="verse-ref">— Salmo 139:14 [TROQUE PELO SEU VERSÍCULO]</div>
+        </div>
+        <textarea rows="3" placeholder="O que Deus está revelando sobre minha identidade hoje?"></textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">✍️</span> Minha Oração de Identidade</div>
+        <div class="prayer-space">
+          <textarea rows="7" placeholder="Pai, obrigada por me criar única... [ESCREVA SUA ORAÇÃO DE IDENTIDADE]"></textarea>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">💛</span> Fechamento</div>
+        <div class="feeling-grid">
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🌸</span>Aceita</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">😢</span>Processando</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">✨</span>Renovada</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">🙏</span>Grata</div>
+          <div class="feeling-btn" onclick="selectFeeling(this)"><span class="emoji">💪</span>Empoderada</div>
+        </div>
+        <textarea rows="2" placeholder="Uma coisa que quero cultivar em mim para amanhã..." style="margin-top:12px"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveDay(3)">💾 Marcar Dia 3 como Concluído ✨</button>
+    </div>
+  </div>
+
+  <!-- Dias 4-30 placeholder -->
+  <div id="entry-generic" class="entry-card" style="display:none">
+    <div class="entry-header" id="generic-header">
+      <div><h2 id="generic-title">📅 Dia — Betânia</h2></div>
+      <div class="date-badge">📅 [DATA]</div>
+    </div>
+    <div class="entry-body">
+      <div style="text-align:center; padding:30px 0; color:var(--suave);">
+        <div style="font-size:2.5rem; margin-bottom:16px;">🌿</div>
+        <p style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--terracota); margin-bottom:8px;">Este dia está esperando por você</p>
+        <p style="font-size:0.85rem; line-height:1.6;">A estrutura completa com gratidão, intenções, versículo e oração está disponível no PDF premium para impressão ou uso digital.</p>
+        <div class="field-group" style="text-align:left; margin-top:24px;">
+          <div class="field-label"><span class="emoji">✍️</span> Oração Livre do Dia</div>
+          <div class="prayer-space"><textarea rows="7" placeholder="Escreva sua oração aqui..."></textarea></div>
+        </div>
+        <button class="save-btn" id="generic-save">💾 Marcar como Concluído ✨</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== REVISÃO ===================== -->
+<div id="revisao" class="section">
+  <div style="text-align:center; margin-bottom:28px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--terracota);">🔍 Revisão Semanal</h2>
+    <p style="color:var(--suave);">A cada 7 dias, pare, respire e olhe para o caminho percorrido</p>
+  </div>
+
+  <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+    <button class="day-btn active" onclick="showReview(1,this)">Semana 1 (Dias 1–7)</button>
+    <button class="day-btn" onclick="showReview(2,this)">Semana 2 (Dias 8–14)</button>
+    <button class="day-btn" onclick="showReview(3,this)">Semana 3 (Dias 15–21)</button>
+    <button class="day-btn" onclick="showReview(4,this)">Semana 4 (Dias 22–30)</button>
+  </div>
+
+  <div class="review-card">
+    <div class="review-header">
+      <h2 id="review-title">✨ Revisão da Semana 1</h2>
+      <p>Dias 1 a 7 — Refletindo sobre a jornada 🌿</p>
+    </div>
+    <div class="review-body">
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta 1 <span class="editable-tag">editável</span></div>
+        <div class="q-text">O que Deus me mostrou esta semana que mudou minha perspectiva?</div>
+        <textarea rows="4" placeholder="[ESCREVA SUA REFLEXÃO — você pode trocar esta pergunta por qualquer outra que ressoe com você]"></textarea>
+      </div>
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta 2 <span class="editable-tag">editável</span></div>
+        <div class="q-text">Qual foi meu maior desafio e como enfrentei com fé?</div>
+        <textarea rows="4" placeholder="[REFLEXÃO LIVRE — adapte esta pergunta para finanças, saúde, relacionamentos...]"></textarea>
+      </div>
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta 3 <span class="editable-tag">editável</span></div>
+        <div class="q-text">O que quero intencionalmente cultivar na próxima semana?</div>
+        <textarea rows="4" placeholder="[INTENÇÃO PARA A PRÓXIMA SEMANA]"></textarea>
+      </div>
+      <div class="review-q">
+        <div class="q-label">🌸 Gratidão da Semana</div>
+        <div class="q-text">Qual foi o momento mais precioso desta semana com Deus?</div>
+        <textarea rows="3" placeholder="[REGISTRE ESTE MOMENTO ESPECIAL]"></textarea>
+      </div>
+      <button class="save-btn">💾 Salvar Revisão da Semana ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MILAGRES ===================== -->
+<div id="milagres" class="section">
+  <div class="miracles-header">
+    <h2>✨ Orações Respondidas</h2>
+    <p>Registre cada milagre, grande ou pequeno — toda resposta de Deus merece ser lembrada 🌸</p>
+  </div>
+  <div class="miracle-form">
+    <h3 style="font-family:'Playfair Display',serif; color:var(--terracota); margin-bottom:18px;">➕ Registrar Nova Oração Respondida</h3>
+    <div class="miracle-row">
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">📅</span> Data do Pedido</div>
+        <input type="date">
+      </div>
+      <div class="field-group">
+        <div class="field-label"><span class="emoji">🎉</span> Data da Resposta</div>
+        <input type="date">
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="field-label"><span class="emoji">🙏</span> O que foi pedido a Deus? <span class="editable-tag">editável</span></div>
+      <textarea rows="2" placeholder="Ex: Orei por provisão financeira para pagar o aluguel..."></textarea>
+    </div>
+    <div class="field-group">
+      <div class="field-label"><span class="emoji">✨</span> Como Deus respondeu?</div>
+      <textarea rows="3" placeholder="Ex: Em 3 dias, recebi um trabalho extra que supriu exatamente a necessidade..."></textarea>
+    </div>
+    <div class="field-group">
+      <div class="field-label"><span class="emoji">💛</span> O que aprendi com esta resposta?</div>
+      <textarea rows="2" placeholder="[LIÇÃO APRENDIDA]"></textarea>
+    </div>
+    <button class="save-btn" onclick="addMiracle()">🌟 Registrar este Milagre</button>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif; color:var(--terracota); margin-bottom:16px; margin-top:28px;">📖 Minhas Orações Respondidas</h3>
+  <div id="miraclesList">
+    <div class="miracle-entry">
+      <div class="miracle-icon">✨</div>
+      <div class="miracle-info">
+        <div class="miracle-date">📅 Dia 1 do diário — Exemplo</div>
+        <h4>Paz no coração</h4>
+        <p><strong>Pedido:</strong> Orei por paz diante de uma situação que me angustiava no trabalho.</p>
+        <p><strong>Resposta:</strong> No dia seguinte, a situação se resolveu e senti uma paz inexplicável já durante a oração.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FINAL ===================== -->
+<div id="final" class="section">
+  <div class="final-cover">
+    <div style="font-size:3rem; margin-bottom:16px;">🎉</div>
+    <h1>Você chegou ao Dia 30!</h1>
+    <h2>Um Lugar Chamado Betânia</h2>
+    <p style="opacity:0.85; margin-top:14px; font-size:1rem;">30 dias de encontros reais com Deus. Você escolheu sentar a Seus pés — e isso não lhe será tirado.</p>
+  </div>
+
+  <div class="final-card">
+    <div class="final-card-header">🌿 Reflexão de Encerramento</div>
+    <div class="final-card-body">
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta Final 1 <span class="editable-tag">editável</span></div>
+        <div class="q-text">Como a minha vida de oração mudou nestes 30 dias?</div>
+        <textarea rows="5" placeholder="Reflita sobre sua jornada — o que era diferente no Dia 1 e o que mudou até hoje..."></textarea>
+      </div>
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta Final 2 <span class="editable-tag">editável</span></div>
+        <div class="q-text">O que Deus fez em mim que eu não esperava?</div>
+        <textarea rows="5" placeholder="[REGISTRE AS SURPRESAS DE DEUS]"></textarea>
+      </div>
+      <div class="review-q">
+        <div class="q-label">❓ Pergunta Final 3 <span class="editable-tag">editável</span></div>
+        <div class="q-text">Qual é a promessa que carrego no coração para os próximos 30 dias?</div>
+        <textarea rows="4" placeholder="[DECLARE SUA PROMESSA]"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-card">
+    <div class="final-card-header">🌟 Minhas Intenções para os Próximos 30 Dias</div>
+    <div class="final-card-body">
+      <textarea rows="5" placeholder="[ESCREVA SUAS INTENÇÕES — você pode iniciar um novo ciclo do diário, criar novas metas, ou definir uma palavra para a próxima temporada]"></textarea>
+      <button class="save-btn" style="margin-top:16px">💾 Salvar Minhas Intenções</button>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Parabéns, guerreira! 🌸</h3>
+    <p>[MENSAGEM DE ENCERRAMENTO EDITÁVEL — Coloque aqui sua assinatura, um convite para o próximo produto, ou uma frase inspiracional de presente para quem concluiu]</p>
+    <p style="font-size:0.8rem; margin-top:8px; opacity:0.7;">Ex: "Com amor, [SEU NOME] 💛 | Siga para o Diário de 60 Dias: Betânia Profunda"</p>
+    <button class="cta-btn" style="margin-top:16px">✨ Compartilhar Minha Conquista 🎉</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Dia salvo! Continue assim! 🌸</div>
+
+<script>
+  const TOTAL = 30;
+  let completedDays = JSON.parse(localStorage.getItem('betania_days') || '[]');
+
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach((t,i) => {
+      const ids = ['abertura','diario','revisao','milagres','final'];
+      t.classList.toggle('active', ids[i] === id);
+    });
+  }
+
+  // Build days grid
+  const grid = document.getElementById('daysGrid');
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'day-dot' + (completedDays.includes(i) ? ' done' : '');
+    d.textContent = completedDays.includes(i) ? '' : i;
+    d.title = `Dia ${i}`;
+    d.onclick = () => goToDay(i);
+    grid.appendChild(d);
+  }
+  updateProgress();
+
+  // Build day selector
+  const sel = document.getElementById('daySelector');
+  for (let i = 1; i <= TOTAL; i++) {
+    const b = document.createElement('button');
+    b.className = 'day-btn' + (i===1?' active':'');
+    b.textContent = `Dia ${i}`;
+    b.onclick = () => selectDay(i, b);
+    sel.appendChild(b);
+  }
+
+  selectDay(1, sel.querySelector('.day-btn'));
+
+  function selectDay(n, btn) {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.entry-card').forEach(c => c.style.display='none');
+    const specific = document.getElementById(`entry-${n}`);
+    if (specific) {
+      specific.style.display = 'block';
+    } else {
+      const g = document.getElementById('entry-generic');
+      document.getElementById('generic-title').textContent = `📅 Dia ${n} — Betânia`;
+      document.getElementById('generic-save').onclick = () => saveDay(n);
+      g.style.display = 'block';
+    }
+    btn.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  }
+
+  function goToDay(n) {
+    show('diario');
+    const btns = document.querySelectorAll('.day-btn');
+    selectDay(n, btns[n-1]);
+  }
+
+  function saveDay(n) {
+    if (!completedDays.includes(n)) {
+      completedDays.push(n);
+      localStorage.setItem('betania_days', JSON.stringify(completedDays));
+      const dots = document.querySelectorAll('.day-dot');
+      if (dots[n-1]) { dots[n-1].classList.add('done'); dots[n-1].textContent = ''; }
+      updateProgress();
+    }
+    showToast(`✅ Dia ${n} concluído! Deus viu cada palavra. 🌸`);
+  }
+
+  function updateProgress() {
+    const pct = (completedDays.length / TOTAL * 100).toFixed(0);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent =
+      `${completedDays.length} de ${TOTAL} dias concluídos ✨`;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function selectFeeling(el) {
+    el.closest('.feeling-grid').querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function showReview(week, btn) {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const titles = ['','Semana 1','Semana 2','Semana 3','Semana 4'];
+    const ranges = ['','Dias 1 a 7','Dias 8 a 14','Dias 15 a 21','Dias 22 a 30'];
+    document.getElementById('review-title').textContent = `✨ Revisão da ${titles[week]}`;
+    document.querySelector('.review-header p').textContent = `${ranges[week]} — Refletindo sobre a jornada 🌿`;
+  }
+
+  function addMiracle() {
+    showToast('🌟 Milagre registrado! Guarde este momento com Deus. ✨');
+  }
+</script>
+</body>
+</html>
